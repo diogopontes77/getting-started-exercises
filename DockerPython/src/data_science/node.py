@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 def nearest_neighbour(X_train, X_test):
-  return np.sum((X_train_numpy[:, None, :] - X_test_numpy[None, :, :]) ** 2, axis=-1).argmin(axis=0)
+  return np.sum((X_train[:, None, :] - X_test[None, :, :]) ** 2, axis=-1).argmin(axis=0)
 
 # re
 
@@ -29,10 +29,10 @@ def make_predictions(input_path: str, output_path: str) -> None:
     # Step 3: Use the result from the previous steps to select the respective rows from the training target set (tip: use .iloc[] function)
 
     y_train = pd.read_csv(os.path.join(input_path, "Y_train.csv"))
+    y_pred = y_train.iloc[result]
     
     # Step 4: Assign the index of test feature set to the result of the previous step.
-    # Fiquei preso neste
-    y_pred = y_train.iloc[result]
+    X_test.index = y_pred.index # deve ser isto, nem sei
 
     # Step 4: Store the result of the previous step in a `y_pred.csv` file inside `output_path`
     y_pred.to_csv(os.path.join(output_path, "y_pred.csv"), index=False)
