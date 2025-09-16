@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
+import os
 
 def nearest_neighbour(X_train, X_test):
   return np.sum((X_train_numpy[:, None, :] - X_test_numpy[None, :, :]) ** 2, axis=-1).argmin(axis=0)
 
+# re
 
 def make_predictions(input_path: str, output_path: str) -> None:
     """Uses 1-nearest neighbour classifier to create predictions.
@@ -15,19 +17,25 @@ def make_predictions(input_path: str, output_path: str) -> None:
 
     # TODO:
     # Step 1: Convert the training and test feature sets to numpy
-    
+    X_train = pd.read_csv(os.path.join(input_path, "X_train.csv"))
+    X_test = pd.read_csv(os.path.join(input_path, "X_test.csv"))
+    X_train_numpy = X_train.to_numpy() # torna num array do numpy que é um formato standard para operaçoes numericas
+    X_test_numpy = X_test.to_numpy()
     
     # Step 2: Call the nearest neighbour function with the numpy-converted training and test feature sets
     
+    result = nearest_neighbour(X_train_numpy, X_test_numpy)
 
     # Step 3: Use the result from the previous steps to select the respective rows from the training target set (tip: use .iloc[] function)
 
+    y_train = pd.read_csv(os.path.join(input_path, "Y_train.csv"))
     
     # Step 4: Assign the index of test feature set to the result of the previous step.
-
+    # Fiquei preso neste
+    y_pred = y_train.iloc[result]
 
     # Step 4: Store the result of the previous step in a `y_pred.csv` file inside `output_path`
-    
+    y_pred.to_csv(os.path.join(output_path, "y_pred.csv"), index=False)
     
 # Do not edit!
 if __name__ == '__main__':
