@@ -1,0 +1,6 @@
+artifact_location: mlflow-artifacts:/810087903140775818
+creation_time: 1758125541602
+experiment_id: '810087903140775818'
+last_update_time: 1758125541602
+lifecycle_stage: active
+name: XGBoost Optuna Credit Model
