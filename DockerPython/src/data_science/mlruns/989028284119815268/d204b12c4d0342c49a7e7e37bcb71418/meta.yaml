@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/989028284119815268/d204b12c4d0342c49a7e7e37bcb71418/artifacts
+end_time: 1758097074178
+entry_point_name: ''
+experiment_id: '989028284119815268'
+lifecycle_stage: active
+run_id: d204b12c4d0342c49a7e7e37bcb71418
+run_name: brawny-flea-251
+run_uuid: d204b12c4d0342c49a7e7e37bcb71418
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1758096941006
+status: 4
+tags: []
+user_id: dpereira

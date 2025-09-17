@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1758096948117
+current_stage: None
+description: ''
+last_updated_timestamp: 1758096948117
+name: random-forest-getting-started
+run_id: d204b12c4d0342c49a7e7e37bcb71418
+run_link: ''
+source: mlflow-artifacts:/989028284119815268/d204b12c4d0342c49a7e7e37bcb71418/artifacts/model
+status: READY
+status_message: null
+storage_location: mlflow-artifacts:/989028284119815268/d204b12c4d0342c49a7e7e37bcb71418/artifacts/model
+user_id: null
+version: 1

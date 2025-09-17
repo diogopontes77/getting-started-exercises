@@ -1,0 +1,43 @@
+artifact_path: model
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.8.10
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.3.2
+mlflow_version: 2.17.2
+model_size_bytes: 3334648
+model_uuid: 4c3ae5a075f442a49c80878c306ea632
+run_id: d204b12c4d0342c49a7e7e37bcb71418
+saved_input_example_info:
+  artifact_path: input_example.json
+  serving_input_path: serving_input_example.json
+  type: ndarray
+signature:
+  inputs: '[{"type": "string", "name": "checking_status", "required": true}, {"type":
+    "long", "name": "duration", "required": true}, {"type": "string", "name": "credit_history",
+    "required": true}, {"type": "string", "name": "purpose", "required": true}, {"type":
+    "double", "name": "credit_amount", "required": true}, {"type": "string", "name":
+    "savings_status", "required": true}, {"type": "string", "name": "employment",
+    "required": true}, {"type": "long", "name": "installment_commitment", "required":
+    true}, {"type": "string", "name": "personal_status", "required": true}, {"type":
+    "string", "name": "other_parties", "required": true}, {"type": "long", "name":
+    "residence_since", "required": true}, {"type": "string", "name": "property_magnitude",
+    "required": true}, {"type": "long", "name": "age", "required": true}, {"type":
+    "string", "name": "other_payment_plans", "required": true}, {"type": "string",
+    "name": "housing", "required": true}, {"type": "long", "name": "existing_credits",
+    "required": true}, {"type": "string", "name": "job", "required": true}, {"type":
+    "long", "name": "num_dependents", "required": true}, {"type": "string", "name":
+    "own_telephone", "required": true}, {"type": "long", "name": "foreign", "required":
+    true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int64", "shape": [-1]}}]'
+  params: null
+utc_time_created: '2025-09-17 08:15:45.247228'
