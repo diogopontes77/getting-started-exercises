@@ -13,14 +13,14 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 import matplotlib.pyplot as plt
 
-# ========== Load & preprocess data ==========
+
 df = pd.read_csv('DatasetCredit-g.csv')
 
-# Let's say the target variable is 'credit_amount'
-y = df['credit_amount']
-X = df.drop(columns=['credit_amount', 'class', 'foreign_worker'])  # Remove target & unrelated columns
 
-# Optional: Map or encode other columns if needed
+y = df['credit_amount']
+X = df.drop(columns=['credit_amount', 'class', 'foreign_worker']) 
+
+
 df['foreign'] = df['foreign_worker'].map({'no': 0, 'yes': 1})
 categorical_features = X.select_dtypes(include=["object"]).columns
 numeric_features = X.select_dtypes(exclude=["object"]).columns
