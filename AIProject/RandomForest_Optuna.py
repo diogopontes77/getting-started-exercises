@@ -109,63 +109,63 @@ study.optimize(objective, n_trials=20)
 print("Best AUC:", study.best_value)
 print("Best Parameters:", study.best_params)
 #grid_search.fit(X_train_processed, y_train)
-#explainer = shap.TreeExplainer(rf_classifier)
+explainer = shap.TreeExplainer(rf_classifier)
 
 # # Get SHAP values for the test set
-#shap_values = explainer.shap_values(X_test_processed)
-#print(shap_values)
+shap_values = explainer.shap_values(X_test_processed)
+print(shap_values)
 # # SHAP values for class 1 (good clients in your case)
-#shap_values_class_1 = shap_values[1]
+shap_values_class_1 = shap_values[1]
 
 # # Plot the SHAP summary plot for class 1
-#shap.summary_plot(shap_values_class_1, X_test_processed)
+shap.summary_plot(shap_values_class_1, X_test_processed)
 
 
-#shap.summary_plot(shap_values_class_1, X_test_processed, feature_names=preprocessor.get_feature_names_out())
+shap.summary_plot(shap_values_class_1, X_test_processed, feature_names=preprocessor.get_feature_names_out())
 
 plt.savefig("shap_summary_plot.png")
-#accuracy = accuracy_score(y_test, grid_search.predict(X_test_processed))
+accuracy = accuracy_score(y_test, grid_search.predict(X_test_processed))
 
-#print("Best Parameters:", grid_search.best_params_)
-#print("Best Estimator:", grid_search.best_estimator_)
-#print("Best Profit Score:", grid_search.best_score_)
-#print("Accuracy:", accuracy)
+print("Best Parameters:", grid_search.best_params_)
+print("Best Estimator:", grid_search.best_estimator_)
+print("Best Profit Score:", grid_search.best_score_)
+print("Accuracy:", accuracy)
 #Má previsao e recall para valores 0, ver o que posso fazer para melhorar
 
 # https://www.mlflow.org/docs/latest/ml/tracking/quickstart/
-# with mlflow.start_run():
-#     # Log the hyperparameters
-#     mlflow.log_params(param_grid_search)
+with mlflow.start_run():
+    # Log the hyperparameters
+    mlflow.log_params(param_grid_search)
 
 #     # Log the loss metric
-#     mlflow.log_metric("accuracy", accuracy)
-#     mlflow.log_metric("Profit", grid_search.best_score_)
+    mlflow.log_metric("accuracy", accuracy)
+    mlflow.log_metric("Profit", grid_search.best_score_)
 
 #     # Infer the model signature
-#     signature = infer_signature(
-#     pd.DataFrame(X_train_processed.toarray() if hasattr(X_train_processed, 'toarray') else X_train_processed,
-#                  columns=feature_names),
-#     rf_classifier.predict(X_train_processed)
-# )
+    signature = infer_signature(
+    pd.DataFrame(X_train_processed.toarray() if hasattr(X_train_processed, 'toarray') else X_train_processed,
+                 columns=feature_names),
+    rf_classifier.predict(X_train_processed)
+)
 
 #     # Log the model, which inherits the parameters and metric
-#     model_info = mlflow.sklearn.log_model(
-#         sk_model=rf_classifier,
-#         signature=signature,
-#         artifact_path="model",
-#         input_example=pd.DataFrame(X_train_processed.toarray() if hasattr(X_train_processed, 'toarray') else X_train_processed,
-#                            columns=feature_names),
-#         registered_model_name="random-forest-getting-started",
-#     )
+    model_info = mlflow.sklearn.log_model(
+        sk_model=rf_classifier,
+        signature=signature,
+        artifact_path="model",
+        input_example=pd.DataFrame(X_train_processed.toarray() if hasattr(X_train_processed, 'toarray') else X_train_processed,
+                           columns=feature_names),
+        registered_model_name="random-forest-getting-started",
+    )
 
 #     # Set a tag that we can use to remind ourselves what this model was for
 #     # mlflow.set_logged_model_tags(
 #     #     model_info.model_id, {"Training Info": "Basic Model random forest classifier with grid search"}
 #     # )
 
-#     loaded_model = mlflow.pyfunc.load_model(model_info.model_uri)
+    loaded_model = mlflow.pyfunc.load_model(model_info.model_uri)
 
-#predictions = loaded_model.predict(X_test_processed_df)
+predictions = loaded_model.predict(X_test_processed_df)
 
 # Create the SHAP explainer object
 

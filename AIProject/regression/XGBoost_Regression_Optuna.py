@@ -7,7 +7,7 @@ import mlflow
 from mlflow.models import infer_signature
 from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, roc_auc_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
@@ -32,6 +32,12 @@ preprocessor = ColumnTransformer([
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
+# =========== Profit Function ==========
+
+def profit_function(y_true, y_pred):
+    within_margin = np.abs(y_true - y_pred) / y_true < 0.3
+    return 100 * within_margin.sum()   # total profit, ver isto melhor
+
 # ========== Optuna Objective ==========
 def objective(trial):
     model = XGBRegressor(
@@ -49,12 +55,15 @@ def objective(trial):
     ])
 
     pipeline.fit(X_train, y_train)
+    y_pred = pipeline.predict(X_test)
+    mse = mean_squared_error(y_test, y_pred)
+    return mse * -1
 
 # ========== Run Optuna ==========
 study = optuna.create_study(direction="maximize")
 study.optimize(objective, n_trials=20)
 
-print("Best RMSE (neg):", study.best_value)
+print("Best MSE (neg):", study.best_value)
 print("Best Parameters:", study.best_params)
 
 # ========== Final Model Training ==========
@@ -74,6 +83,7 @@ r2 = r2_score(y_test, y_pred)
 
 print("Final MAE:", mae)
 print("Final R²:", r2)
+
 
 # ========== SHAP ==========
 processed = preprocessor.fit_transform(X_test)

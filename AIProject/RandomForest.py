@@ -11,12 +11,12 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 
 df = pd.read_csv('DatasetCredit-g.csv')
-#mlflow.set_tracking_uri(uri="http://127.0.0.1:8080")
-shap.initjs()
+mlflow.set_tracking_uri(uri="http://127.0.0.1:5001")
+#shap.initjs()
 mapping_foreign = {'no': 0, 'yes': 1}
 mapping = {'bad': 0, 'good': 1}
 
-#mlflow.set_experiment("Getting Started Exercise CCG")
+mlflow.set_experiment("Random Forest Classifier GridSearch CCG")
 
 
 df['class_binary'] = df['class'].map(mapping)
@@ -119,39 +119,39 @@ print("Accuracy:", accuracy)
 #Má previsao e recall para valores 0, ver o que posso fazer para melhorar
 
 # https://www.mlflow.org/docs/latest/ml/tracking/quickstart/
-# with mlflow.start_run():
-#     # Log the hyperparameters
-#     mlflow.log_params(param_grid_search)
+with mlflow.start_run():
+     # Log the hyperparameters
+     mlflow.log_params(param_grid_search)
 
 #     # Log the loss metric
-#     mlflow.log_metric("accuracy", accuracy)
-#     mlflow.log_metric("Profit", grid_search.best_score_)
+     mlflow.log_metric("accuracy", accuracy)
+     mlflow.log_metric("Profit", grid_search.best_score_)
 
-#     # Infer the model signature
-#     signature = infer_signature(
-#     pd.DataFrame(X_train_processed.toarray() if hasattr(X_train_processed, 'toarray') else X_train_processed,
-#                  columns=feature_names),
-#     rf_classifier.predict(X_train_processed)
-# )
+     # Infer the model signature
+     signature = infer_signature(
+     pd.DataFrame(X_train_processed.toarray() if hasattr(X_train_processed, 'toarray') else X_train_processed,
+                  columns=feature_names),
+     rf_classifier.predict(X_train_processed)
+ )
 
 #     # Log the model, which inherits the parameters and metric
-#     model_info = mlflow.sklearn.log_model(
-#         sk_model=rf_classifier,
-#         signature=signature,
-#         artifact_path="model",
-#         input_example=pd.DataFrame(X_train_processed.toarray() if hasattr(X_train_processed, 'toarray') else X_train_processed,
-#                            columns=feature_names),
-#         registered_model_name="random-forest-getting-started",
-#     )
+     model_info = mlflow.sklearn.log_model(
+         sk_model=rf_classifier,
+         signature=signature,
+         artifact_path="model",
+         input_example=pd.DataFrame(X_train_processed.toarray() if hasattr(X_train_processed, 'toarray') else X_train_processed,
+                            columns=feature_names),
+         registered_model_name="random-forest-getting-started",
+     )
 
-#     # Set a tag that we can use to remind ourselves what this model was for
-#     # mlflow.set_logged_model_tags(
-#     #     model_info.model_id, {"Training Info": "Basic Model random forest classifier with grid search"}
-#     # )
+     # Set a tag that we can use to remind ourselves what this model was for
+     # mlflow.set_logged_model_tags(
+     #     model_info.model_id, {"Training Info": "Basic Model random forest classifier with grid search"}
+     # )
 
-#     loaded_model = mlflow.pyfunc.load_model(model_info.model_uri)
+     loaded_model = mlflow.pyfunc.load_model(model_info.model_uri)
 
-#predictions = loaded_model.predict(X_test_processed_df)
+predictions = loaded_model.predict(X_test_processed_df)
 
 # Create the SHAP explainer object
 
