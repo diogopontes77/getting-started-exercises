@@ -12,7 +12,7 @@ from sklearn.metrics import accuracy_score, roc_auc_score, confusion_matrix, mak
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
-
+# Mudar aqui para inicialmente ser sem o optuna, mandar para o ml flow, dps grid search e dps optuna
 
 df = pd.read_csv('DatasetCredit-g.csv')
 mlflow.set_tracking_uri(uri="http://localhost:5001")
@@ -38,7 +38,7 @@ preprocessor = ColumnTransformer(
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-# ========== Profit score ==========
+# ========== Profit score ========== para classification
 profit_matrix = np.array([
     [0,   -200],
     [-200, 100]

@@ -1,3 +1,4 @@
+import re
 from matplotlib import pyplot as plt
 import optuna
 import pandas as pd
@@ -95,7 +96,7 @@ def objective(trial):
         ("classifier", clf)
     ])
     
-    feature_names = preprocessor.get_feature_names_out()
+    #feature_names = preprocessor.get_feature_names_out()
     
     pipeline.fit(X_train, y_train)
     y_pred_proba = pipeline.predict_proba(X_test)[:, 1]
@@ -105,56 +106,75 @@ def objective(trial):
 # Use the profit_scorer defined earlier
 study = optuna.create_study(direction="maximize")
 study.optimize(objective, n_trials=20)
+# DE acordo com os melhores parametros encontradas na optuna, criar o modelo final e meter o final_pipeline para implementar o fitted model e o fitted_processor,
+# para dps utilizar este fitted model e processor para o shap e o mlflow
+best_params = study.best_params
+clf = RandomForestClassifier(
+    **best_params,
+    class_weight='balanced',
+    random_state=42
+    )
 
-print("Best AUC:", study.best_value)
-print("Best Parameters:", study.best_params)
+final_pipeline = Pipeline([
+    ("preprocessor", preprocessor),
+    ("classifier", clf)
+])
+
+final_pipeline.fit(X_train, y_train)
+
+y_pred = final_pipeline.predict(X_test)
+y_pred_proba = final_pipeline.predict_proba(X_test[:, 1])
+
+
+accuracy = accuracy_score(y_test, y_pred)
+auc = roc_auc_score(y_test, y_pred_proba)
+profit = profit_score(y_test, y_pred)
+
+
 #grid_search.fit(X_train_processed, y_train)
-explainer = shap.TreeExplainer(rf_classifier)
+# ========== SHAP n ==========
+fitted_model = final_pipeline.named_steps["classifier"]
+fitted_preprocessor = final_pipeline.named_steps["preprocessor"]
+X_test_processed = fitted_preprocessor.transform(X_test)
+raw_feature_names = fitted_preprocessor.get_feature_names_out()
+feature_names = [re.sub(r"[<>\[\]]", "", name) for name in raw_feature_names]
 
-# # Get SHAP values for the test set
-shap_values = explainer.shap_values(X_test_processed)
-print(shap_values)
-# # SHAP values for class 1 (good clients in your case)
-shap_values_class_1 = shap_values[1]
+X_test_df = pd.DataFrame(
+    X_test_processed.toarray() if hasattr(X_test_processed, 'toarray') else X_test_processed,
+    columns=feature_names
+)
 
-# # Plot the SHAP summary plot for class 1
-shap.summary_plot(shap_values_class_1, X_test_processed)
+explainer = shap.TreeExplainer(fitted_model)
+shap_values = explainer.shap_values(X_test_df)
+shap.summary_plot(shap_values, X_test_df, feature_names=feature_names)
+plt.savefig("shap_summary_plot_XGBoost.png")
+#accuracy = accuracy_score(y_test, grid_search.predict(X_test_processed))
 
-
-shap.summary_plot(shap_values_class_1, X_test_processed, feature_names=preprocessor.get_feature_names_out())
-
-plt.savefig("shap_summary_plot.png")
-accuracy = accuracy_score(y_test, grid_search.predict(X_test_processed))
-
-print("Best Parameters:", grid_search.best_params_)
-print("Best Estimator:", grid_search.best_estimator_)
-print("Best Profit Score:", grid_search.best_score_)
+print("Best Parameters:", study.best_params_)
+print("Best Estimator:", study.best_estimator_)
+print("Best Profit Score:", study.best_score_)
 print("Accuracy:", accuracy)
 #Má previsao e recall para valores 0, ver o que posso fazer para melhorar
 
 # https://www.mlflow.org/docs/latest/ml/tracking/quickstart/
 with mlflow.start_run():
     # Log the hyperparameters
-    mlflow.log_params(param_grid_search)
+    mlflow.log_params(best_params)
 
 #     # Log the loss metric
     mlflow.log_metric("accuracy", accuracy)
-    mlflow.log_metric("Profit", grid_search.best_score_)
+    mlflow.log_metric("Profit", profit)
+    mlflow.log_metric("AUC", auc)
 
 #     # Infer the model signature
-    signature = infer_signature(
-    pd.DataFrame(X_train_processed.toarray() if hasattr(X_train_processed, 'toarray') else X_train_processed,
-                 columns=feature_names),
-    rf_classifier.predict(X_train_processed)
-)
+    signature = infer_signature(X_test_df, y_pred)
 
 #     # Log the model, which inherits the parameters and metric
     model_info = mlflow.sklearn.log_model(
-        sk_model=rf_classifier,
+        sk_model=fitted_model,
         signature=signature,
         artifact_path="model",
-        input_example=pd.DataFrame(X_train_processed.toarray() if hasattr(X_train_processed, 'toarray') else X_train_processed,
-                           columns=feature_names),
+        input_example=X_test_df.head(),
         registered_model_name="random-forest-getting-started",
     )
 
@@ -165,7 +185,7 @@ with mlflow.start_run():
 
     loaded_model = mlflow.pyfunc.load_model(model_info.model_uri)
 
-predictions = loaded_model.predict(X_test_processed_df)
+predictions = loaded_model.predict(X_test_df)
 
 # Create the SHAP explainer object
 
