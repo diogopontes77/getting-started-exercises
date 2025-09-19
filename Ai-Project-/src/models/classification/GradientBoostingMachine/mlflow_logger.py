@@ -3,7 +3,7 @@ from mlflow.models import infer_signature
 
 def log_experiment(model, X_test_df, y_pred, best_params, metrics):
     mlflow.set_tracking_uri(uri="http://localhost:5001")
-    mlflow.set_experiment("XGBoost Optuna Credit Model")
+    mlflow.set_experiment("GBM Credit Model")
 
     with mlflow.start_run():
         mlflow.log_params(best_params)
@@ -14,8 +14,7 @@ def log_experiment(model, X_test_df, y_pred, best_params, metrics):
 
         mlflow.sklearn.log_model(
             sk_model=model,
-            name="model",
+            artifact_path="model",
             signature=signature,
-            input_example=X_test_df.head(),
-            registered_model_name="xgb-optuna-credit-model"
+            registered_model_name="gbm-optuna-credit-model"
         )

@@ -3,7 +3,7 @@ from sklearn.metrics import roc_auc_score
 from model import build_pipeline
 from sklearn.svm import SVC
 
-def optimize_svm(X_train, y_train, X_test, y_test, preprocessor, n_trials=20):
+def optimize(X_train, y_train, X_test, y_test, preprocessor, n_trials=20):
     def objective(trial):
         params = {
             "C": trial.suggest_float("C", 1e-3, 100, log=True),
@@ -13,7 +13,7 @@ def optimize_svm(X_train, y_train, X_test, y_test, preprocessor, n_trials=20):
             "random_state": 42
         }
 
-        pipeline = build_pipeline(preprocessor, model_type="svm", model_params=params)
+        pipeline = build_pipeline(preprocessor,params)
         pipeline.fit(X_train, y_train)
         y_pred_proba = pipeline.predict_proba(X_test)[:, 1]
         return roc_auc_score(y_test, y_pred_proba)

@@ -3,7 +3,7 @@ from sklearn.metrics import roc_auc_score
 from model import build_pipeline  # Assumes this accepts a model name or type
 from sklearn.tree import DecisionTreeClassifier
 
-def optimize_decision_tree(X_train, y_train, X_test, y_test, preprocessor, n_trials=20):
+def optimize(X_train, y_train, X_test, y_test, preprocessor, n_trials=20):
     def objective(trial):
         params = {
             "max_depth": trial.suggest_int("max_depth", 2, 50),
@@ -13,7 +13,7 @@ def optimize_decision_tree(X_train, y_train, X_test, y_test, preprocessor, n_tri
             "random_state": 42
         }
 
-        pipeline = build_pipeline(preprocessor, model_type="decision_tree", model_params=params)
+        pipeline = build_pipeline(preprocessor, params)
         pipeline.fit(X_train, y_train)
         y_pred_proba = pipeline.predict_proba(X_test)[:, 1]
         return roc_auc_score(y_test, y_pred_proba)
