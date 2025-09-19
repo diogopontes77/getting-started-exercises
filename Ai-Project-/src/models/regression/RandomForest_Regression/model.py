@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import confusion_matrix, make_scorer
@@ -13,9 +14,9 @@ profit_score = make_scorer(profit_function, greater_is_better=True) # quanto mai
 
 def build_pipeline(preprocessor, params=None):
     if params is None:
-        rgr = LinearRegression()
+        rgr = RandomForestRegressor()
     else:
-        rgr = LinearRegression(**params)
+        rgr = RandomForestRegressor(**params)
 
     pipeline = Pipeline([
         ("preprocessor", preprocessor),

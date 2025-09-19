@@ -14,6 +14,7 @@ def main():
     print("SHAP")
     X_test_df = explain_model(final_pipeline, X_test)
 
+    print("Confusion Matrix:\n", cm)
     # 🔹 Log to MLflow
     print("Ver o MLFLOW")
     log_experiment(final_pipeline, X_test_df, y_pred, best_params, metrics)

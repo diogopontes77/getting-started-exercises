@@ -10,7 +10,7 @@ profit_matrix = np.array([
 ])
 
 def profit_score(y_true, y_pred):
-    cm = confusion_matrix(y_true, y_pred, labels=[1, 0])
+    cm = confusion_matrix(y_true, y_pred)
     return (cm * profit_matrix).sum()
 
 profit_scorer = make_scorer(profit_score, greater_is_better=True)

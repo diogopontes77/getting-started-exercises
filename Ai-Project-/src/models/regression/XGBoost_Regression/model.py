@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import confusion_matrix, make_scorer
-from xgboost import XGBClassifier
+from xgboost import XGBRegressor
 
 # Profit scoring
 def profit_function(y_test, y_pred):
@@ -13,9 +13,9 @@ profit_score = make_scorer(profit_function, greater_is_better=True) # quanto mai
 
 def build_pipeline(preprocessor, params=None):
     if params is None:
-        rgr = LinearRegression()
+        rgr = XGBRegressor()
     else:
-        rgr = LinearRegression(**params)
+        rgr = XGBRegressor(**params)
 
     pipeline = Pipeline([
         ("preprocessor", preprocessor),

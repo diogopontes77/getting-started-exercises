@@ -4,7 +4,7 @@ from sklearn.metrics import mean_squared_error
 from model import build_pipeline
 from sklearn.ensemble import GradientBoostingRegressor
 
-def optimize_gbm_regressor(X_train, y_train, X_test, y_test, preprocessor, n_trials=20):
+def optimize(X_train, y_train, X_test, y_test, preprocessor, n_trials=20):
     def objective(trial):
         params = {
             "n_estimators": trial.suggest_int("n_estimators", 100, 500),
@@ -16,7 +16,7 @@ def optimize_gbm_regressor(X_train, y_train, X_test, y_test, preprocessor, n_tri
             "random_state": 42
         }
 
-        pipeline = build_pipeline(preprocessor, model_type="gbm_regressor", model_params=params)
+        pipeline = build_pipeline(preprocessor,params)
         pipeline.fit(X_train, y_train)
         y_pred = pipeline.predict(X_test)
         mse = mean_squared_error(y_test, y_pred)

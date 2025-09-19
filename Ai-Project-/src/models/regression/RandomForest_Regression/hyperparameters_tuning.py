@@ -6,16 +6,15 @@ from model import build_pipeline
 def optimize(X_train, y_train, X_test, y_test, preprocessor, n_trials=20):
     def objective(trial):
         params = {
-            "n_estimators": trial.suggest_int("n_estimators", 100, 500),
-            "max_depth": trial.suggest_int("max_depth", 3, 30),
+             "n_estimators": trial.suggest_int("n_estimators", 100, 300),
+            "max_depth": trial.suggest_int("max_depth", 3, 50),
             "min_samples_split": trial.suggest_int("min_samples_split", 2, 10),
             "min_samples_leaf": trial.suggest_int("min_samples_leaf", 1, 10),
-            "max_features": trial.suggest_categorical("max_features", ["auto", "sqrt", "log2"]),
-            "random_state": 42        
+            "random_state": 42       
             }
 
         # Assumes build_pipeline(preprocessor, model_type, params)
-        pipeline = build_pipeline(preprocessor, model_type="random_forest_regressor", model_params=params)
+        pipeline = build_pipeline(preprocessor,params)
         pipeline.fit(X_train, y_train)
         y_pred = pipeline.predict(X_test)
 

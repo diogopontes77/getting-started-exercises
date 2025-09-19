@@ -16,7 +16,7 @@ def explain_model(pipeline, X_test):
         columns=feature_names
     )
 
-    explainer = shap.LinearExplainer(fitted_model, X_test_df, feature_dependence="independent")
+    explainer = shap.TreeExplainer(fitted_model)
     shap_values = explainer.shap_values(X_test_df)
     shap.summary_plot(shap_values, X_test_df, feature_names=feature_names)
     plt.savefig("shap_summary_plot_RF_Regression.png")
